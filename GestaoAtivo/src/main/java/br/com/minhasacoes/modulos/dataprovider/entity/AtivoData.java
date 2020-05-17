@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -21,8 +23,12 @@ public class AtivoData implements Serializable {
 	private static final long serialVersionUID = 8041778322744964986L;
 
 	@Id
-	@Column(name = "id", length = 5, nullable = false)
-	private String id;
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name = "id", nullable = false)
+	private Long id;
+	
+	@Column(name = "codigo", length = 5, nullable = false)
+	private String codigo;
 	
 	@Column(name = "nome", length = 50, nullable = false)
 	private String nome;

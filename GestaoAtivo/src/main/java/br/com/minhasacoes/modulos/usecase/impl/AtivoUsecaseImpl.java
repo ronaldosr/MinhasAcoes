@@ -19,29 +19,87 @@ public class AtivoUsecaseImpl implements AtivoUsecase {
 	private AtivoRepository ativoRepository; 
 	
 	@Override
-	public Optional<Ativo> obterAtivo(String id) {
-		return converterParaAtivo(ativoRepository.findById(id));
+	public Optional<Ativo> obterAtivoPorId(Long id) {
+		if (id != null) {
+			return converterParaAtivo(ativoRepository.findById(id));
+		} else {
+			return Optional.empty();
+		}
 	}
 	
-	/**
-	 * @apiNote Converte o classe AtivoData na classe de domínio Ativo
-	 * @param ativoData
-	 * @return ativo
-	 */
+	@Override
+	public Optional<Ativo> cadastarAtivo(Ativo ativo) {
+		if (ativo != null) {			
+			ativo.setSituacao(true);
+			return converterParaAtivo(
+					ativoRepository.save(converterParaAtivoData(ativo))
+			);
+		}
+		return Optional.empty();
+	}
+	
+	@Override
+	public Optional<Ativo> obterAtivoPorCodigo(String codigo) {
+		if (codigo != null) {
+			return converterParaAtivo(ativoRepository.findByCodigo(codigo));
+		} else {
+			return Optional.empty();
+		}
+	}
+	
+	@Override
+	public Boolean temAtivoPorCodigo(String codigoAtivo) {
+		if (codigoAtivo != null) {
+			Optional<Ativo> ativo = converterParaAtivo(ativoRepository.findByCodigo(codigoAtivo));
+			if (ativo.isPresent()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+	
+	private AtivoData converterParaAtivoData(Ativo ativo) {
+		if (ativo != null) {
+			AtivoData ativoData = new AtivoData();
+			ativoData.setCodigo(ativo.getCodigo());
+			ativoData.setNome(ativo.getNome());
+			ativoData.setSetor(ativo.getSetor().getId());
+			ativoData.setTipo(ativo.getTipo().getId());
+			ativoData.setEstaHabilitado(ativo.getSituacao());
+			return ativoData;
+		}
+			
+		return null;
+	}
+
 	private Optional<Ativo> converterParaAtivo (Optional<AtivoData> ativoData) {				
-		if (ativoData.isPresent()) {			
-			Optional<Ativo> ativo = Optional.empty();
+		if (ativoData.isPresent()) {
+			Optional<Ativo> ativo = Optional.of(new Ativo());			
 			ativo.get().setId(ativoData.get().getId());
+			ativo.get().setCodigo(ativoData.get().getCodigo());
 			ativo.get().setNome(ativoData.get().getNome());
 			ativo.get().setTipo(Tipo.getTipoPorId(ativoData.get().getTipo()));
 			ativo.get().setSetor(Setor.getSetorPorId(ativoData.get().getSetor()));
-			if (ativoData.get().isEstaHabilitado()) {
-				ativo.get().setSituacao("Habilitado");
-			} else {
-				ativo.get().setSituacao("Desabilitado");
-			}
+			ativo.get().setSituacao(ativoData.get().isEstaHabilitado());			
 			return ativo;
 		}		
-		return null;				
+		return Optional.empty();				
 	}
+	
+	private Optional<Ativo> converterParaAtivo (AtivoData ativoData) {				
+		if (ativoData != null) {
+			Optional<Ativo> ativo = Optional.of(new Ativo());			
+			ativo.get().setId(ativoData.getId());
+			ativo.get().setCodigo(ativoData.getCodigo());
+			ativo.get().setNome(ativoData.getNome());
+			ativo.get().setTipo(Tipo.getTipoPorId(ativoData.getTipo()));
+			ativo.get().setSetor(Setor.getSetorPorId(ativoData.getSetor()));
+			ativo.get().setSituacao(ativoData.isEstaHabilitado());
+			return ativo;
+		}		
+		return Optional.empty();				
+	}
+
 }

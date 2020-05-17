@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Ativo {
 
-	private String id;
+	private Long id;
+	private String codigo;
 	private String nome;
 	private Tipo tipo;
 	private Setor setor;	
-	private String situacao;
+	private Boolean situacao;
 }

@@ -8,7 +8,13 @@ import org.springframework.stereotype.Repository;
 import br.com.minhasacoes.modulos.dataprovider.entity.AtivoData;
 
 @Repository
-public interface AtivoRepository extends JpaRepository<AtivoData, Integer> {
+public interface AtivoRepository extends JpaRepository<AtivoData, Long> {
 
-	public Optional<AtivoData> findById(String id);
+	public Optional<AtivoData> findById(Long id);
+	
+	@SuppressWarnings("unchecked")
+	public AtivoData save(AtivoData ativoData);
+	
+	public AtivoData findByCodigo(String codigo);
+	
 }
